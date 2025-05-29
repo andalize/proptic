@@ -14,13 +14,19 @@ RUN apk add --no-cache gcc musl-dev postgresql-dev
 RUN apk add --no-cache build-base linux-headers
 
 
+RUN adduser -D appuser
+
 # Install Python dependencies
-COPY ./apartments/requirements.txt /services/
+COPY ./properties/requirements.txt /services/
 RUN pip install --upgrade pip --root-user-action=ignore && \
     pip install -r requirements.txt --root-user-action=ignore
 
 # Copy app files into container
 COPY . /services/
+
+
+USER appuser
+
 
 CMD ["sh", "-c", "python /services/shared_scripts/wait_for_db.py && \
     python manage.py migrate && \

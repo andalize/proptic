@@ -22,7 +22,7 @@ services:
   #   depends_on:
   #     - hotel-api
   #     - rental-api
-  #     - apartments-api
+  #     - properties-api
 
   # hotel-api:
   #   build:
@@ -76,36 +76,48 @@ services:
   #   env_file:
   #     - ./services/rental/.env
   
-  apartments-api:
+  properties-api:
     build:
       context: ./services
-      dockerfile: apartments/Dockerfile
+      dockerfile: properties/Dockerfile
 
     ports:
       - "9003:9000"
     volumes:
-      - ./services/apartments:/services
+      - ./services/properties:/services
       - static-data:/vol/web
       - ./services/shared_scripts:/services/shared_scripts
 
     env_file:
-      - ./services/apartments/.env
-    depends_on:
-      - apartments-db
+      - ./.env 
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASSWORD}
+      - DEBUG=${DEBUG}
 
-  apartments-db:
-    image: postgres:13-alpine
+    depends_on:
+      - properties-db
+
+  properties-db:
+    image: postgres:14-alpine
     volumes:
-      - apartments-db-data:/var/lib/postgresql/data
+      - properties-db-data:/var/lib/postgresql/data
     ports:
       - '5438:5432'
+
     env_file:
-      - ./services/apartments/.env
+      - ./.env 
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
 
 volumes:
   # hotel-db-data:
-  apartments-db-data:
+  properties-db-data:
   # rental-db-data:
   # pos-db-data:
   static-data:
