@@ -56,7 +56,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     """Custom user model."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(max_length=255, unique=True)
-    name = models.CharField(max_length=255)
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
     roles = models.ManyToManyField(Role, related_name='users') 
     national_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     passport_number = models.CharField(max_length=255, unique=True, null=True, blank=True)
