@@ -111,6 +111,7 @@ class PropertyUnit(models.Model):
         ('sale', 'Sale')
     ]
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     property_project = models.ForeignKey(PropertyProject, on_delete=models.CASCADE, related_name='units')
     unit_number = models.CharField(max_length=50)
     unit_type = models.CharField(max_length=20, choices=UNIT_TYPES)
@@ -119,7 +120,9 @@ class PropertyUnit(models.Model):
     price = models.DecimalField(max_digits=12, decimal_places=2)
     available = models.BooleanField(default=True)
     amenities = models.JSONField(blank=True, null=True)
+    paid = models.BooleanField(default=False)
     paid_days = models.PositiveIntegerField()
+    paid_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
