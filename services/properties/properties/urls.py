@@ -5,7 +5,7 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('api/v1/users/', include('user.urls')),
+    path('api/v1/users/', include('user.urls')),
     path('api/v1/properties/', include('property_project.urls')),
 
 ]
