@@ -79,21 +79,24 @@ class PropertyUnitListAPIView(APIView):
 
     """Handles GET all and POST for units"""
     def get(self, request):
+        
         units = PropertyUnit.objects.select_related('property_project')
         
-        # Add filtering
-        contract_type = request.query_params.get('contract_type')
-        if contract_type:
-            units = units.filter(contract_type=contract_type)
-            
-        available = request.query_params.get('available')
-        if available:
-            units = units.filter(available=available.lower() == 'true')
-            
-        units = units.order_by('property_project__name', 'unit_number')
-        page = self.pagination_class().paginate_queryset(units, request)
+        # Optional: filtering can go here
+
+        units = units.order_by('property_project__name', 'unit_name')
+        
+        # Step 1: Instantiate the paginator
+        paginator = self.pagination_class()
+
+        # Step 2: Paginate the queryset
+        page = paginator.paginate_queryset(units, request)
+
+        # Step 3: Serialize the page
         serializer = PropertyUnitSerializer(page, many=True)
-        return self.pagination_class().get_paginated_response(serializer.data)
+
+        # Step 4: Return paginated response from the same paginator instance
+        return paginator.get_paginated_response(serializer.data)
 
     def post(self, request):
         serializer = PropertyUnitSerializer(data=request.data)
