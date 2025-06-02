@@ -1,11 +1,5 @@
 from django.db import models
-
-# Create your models here.
-"""
-Database models.
-"""
 import uuid
-import os
 
 from django.conf import settings
 from django.db import models
@@ -82,7 +76,7 @@ class PropertyProject(models.Model):
     name = models.CharField(max_length=255)
     address = models.TextField()
     description = models.TextField(blank=True, null=True)
-
+    cover_photo = models.ImageField(upload_to='property_projects/covers/', null=True, blank=True)
 
     class Meta:
         db_table = 'property_projects'
@@ -107,23 +101,16 @@ class PropertyUnit(models.Model):
         ('office', 'Office'),
     ]
 
-    CONTRACT_CHOICES = [
-        ('rent', 'Rent'),
-        ('sale', 'Sale')
-    ]
-
+  
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    property_project = models.ForeignKey(PropertyProject, on_delete=models.CASCADE, related_name='units')
-    unit_number = models.CharField(max_length=50)
+    property_project_id = models.ForeignKey(PropertyProject, on_delete=models.CASCADE, related_name='units')
+    unit_name = models.CharField(max_length=50)
     unit_type = models.CharField(max_length=20, choices=UNIT_TYPES)
-    contract_type = models.CharField(max_length=10, choices=CONTRACT_CHOICES)
     purpose = models.CharField(max_length=20, choices=PURPOSE_CHOICES)
     price = models.DecimalField(max_digits=12, decimal_places=2)
-    available = models.BooleanField(default=True)
+    is_listed_for_rent = models.BooleanField(default=False)
+    is_listed_for_sale = models.BooleanField(default=False)
     amenities = models.JSONField(blank=True, null=True)
-    paid = models.BooleanField(default=False)
-    paid_days = models.PositiveIntegerField()
-    paid_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -134,11 +121,29 @@ class PropertyUnit(models.Model):
     
 
 
+class PropertyUnitImage(models.Model):
+    property_unit_id = models.ForeignKey(PropertyUnit, on_delete=models.CASCADE, related_name='gallery')
+    image = models.ImageField(upload_to='property_units/gallery/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'property_unit_images'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['property_unit_id', 'image'],
+                name='unique_image_per_unit'
+            )
+        ]
+
+    def __str__(self):
+        return f"Image for {self.property_unit.unit_name}"
+
+
 class TenantProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    tenancy_start_date = models.DateField(null=True, blank=True)
-    tenancy_end_date = models.DateField(null=True, blank=True)
-    property_unit = models.ForeignKey('PropertyUnit', on_delete=models.SET_NULL, null=True, blank=True)
+    user_id = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
+    emergency_contact = models.CharField(max_length=255, null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='tenant_profiles/', null=True, blank=True)
 
     class Meta:
         db_table = 'tenant_profiles'
@@ -148,31 +153,67 @@ class TenantProfile(models.Model):
 
 
 
-# class Tenant(models.Model):
-#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-#     first_name = models.CharField(max_length=255)
-#     last_name = models.CharField(max_length=255)
-#     national_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
-#     passport_number = models.CharField(max_length=255, unique=True, null=True, blank=True)
-#     email = models.EmailField(unique=True)
-#     phone = models.CharField(max_length=20, blank=True, null=True)
+class Tenancy(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    property_unit_id = models.ForeignKey(PropertyUnit, on_delete=models.CASCADE, related_name="tenancies")
+    tenant_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tenancies")
+    tenancy_start_date = models.DateField()
+    tenancy_end_date = models.DateField(blank=True, null=True)
+    monthly_rent = models.DecimalField(max_digits=12, decimal_places=2)
+    deposit_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    rent_period_paid = models.PositiveIntegerField(help_text="Number of days covered by the paid rent", default=0)
+    paid_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    payment_due_date = models.DateField(null=True, blank=True)
+    active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-#     def __str__(self):
-#         return f"{self.first_name} {self.last_name}"
-    
+    class Meta:
+        db_table = 'tenancies'
 
-# class Tenancy(models.Model):
-#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-#     apartment_unit = models.ForeignKey(PropertyUnit, on_delete=models.CASCADE, related_name="tenancies")
-#     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name="tenancies")
-#     tenancy_start_date = models.DateField()
-#     tenancy_end_date = models.DateField(blank=True, null=True)
-#     paid_rent = models.BooleanField(default=False)
-#     rent_period_paid = models.PositiveIntegerField(help_text="Number of days covered by the paid rent", default=0)
-#     paid_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    def __str__(self):
+        return f"Tenancy for {self.tenant.email} in {self.property_unit.unit_name}"
 
-#     def __str__(self):
-#         return f"Tenancy for {self.tenant} in {self.apartment_unit}"
+
+class Booking(models.Model):
+
+    PAYMENT_STATUSES = [
+        ('pending', 'Pending'),
+        ('paid', 'Paid'), 
+        ('cancelled', 'Cancelled')
+    ]
+
+    BOOKING_STATUSES = [
+
+        ('confirmed', 'Confirmed'),
+        ('checked_in', 'Checked In'),
+        ('checked_out', 'Checked Out'), ('cancelled', 'Cancelled')
+    ]
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    property_unit_id = models.ForeignKey(PropertyUnit, on_delete=models.CASCADE, related_name="bookings")
+    guest_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings")
+    check_in = models.DateTimeField()
+    check_out = models.DateTimeField()
+    total_amount = models.DecimalField(max_digits=12, decimal_places=2)
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUSES, default='pending')
+    booking_status = models.CharField(max_length=20, choices=BOOKING_STATUSES, default='confirmed')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'bookings'
+
+    def __str__(self):
+        return f"Booking by {self.guest.email} for {self.property_unit.unit_number}"
+
+
+class Sale(models.Model):
+    property_unit_id = models.OneToOneField(PropertyUnit, on_delete=models.CASCADE, related_name='sale')
+    buyer_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    sold_price = models.DecimalField(max_digits=12, decimal_places=2)
+    sold_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'sales'
 
 
 
