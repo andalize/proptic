@@ -10,6 +10,20 @@ from django.contrib.auth.models import (
 )
 
 
+class PropertyProject(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    address = models.TextField()
+    description = models.TextField(blank=True, null=True)
+    cover_photo = models.ImageField(upload_to='property_projects/covers/', null=True, blank=True)
+
+    class Meta:
+        db_table = 'property_projects'
+
+    def __str__(self):
+        return self.name
+
 class Role(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=50, unique=True)
@@ -55,6 +69,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     roles = models.ManyToManyField(Role, related_name='users') 
     national_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     passport_number = models.CharField(max_length=255, unique=True, null=True, blank=True)
+    property_project = models.ForeignKey(
+        PropertyProject, 
+        on_delete=models.CASCADE,
+        related_name='managers',
+        null=True,
+        blank=True
+    )
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -68,22 +89,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
-
-
-class PropertyProject(models.Model):
-
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255)
-    address = models.TextField()
-    description = models.TextField(blank=True, null=True)
-    cover_photo = models.ImageField(upload_to='property_projects/covers/', null=True, blank=True)
-
-    class Meta:
-        db_table = 'property_projects'
-
-    def __str__(self):
-        return self.name
-    
 
 class PropertyUnit(models.Model):
     UNIT_TYPES = [
@@ -103,7 +108,7 @@ class PropertyUnit(models.Model):
 
   
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    property_project_id = models.ForeignKey(PropertyProject, on_delete=models.CASCADE, related_name='units')
+    property_project = models.ForeignKey(PropertyProject, on_delete=models.CASCADE, related_name='units')
     unit_name = models.CharField(max_length=50)
     unit_type = models.CharField(max_length=20, choices=UNIT_TYPES)
     purpose = models.CharField(max_length=20, choices=PURPOSE_CHOICES)
@@ -122,7 +127,7 @@ class PropertyUnit(models.Model):
 
 
 class PropertyUnitImage(models.Model):
-    property_unit_id = models.ForeignKey(PropertyUnit, on_delete=models.CASCADE, related_name='gallery')
+    property_unit = models.ForeignKey(PropertyUnit, on_delete=models.CASCADE, related_name='gallery')
     image = models.ImageField(upload_to='property_units/gallery/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
@@ -140,7 +145,7 @@ class PropertyUnitImage(models.Model):
 
 
 class TenantProfile(models.Model):
-    user_id = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
     emergency_contact = models.CharField(max_length=255, null=True, blank=True)
     profile_picture = models.ImageField(upload_to='tenant_profiles/', null=True, blank=True)
@@ -155,8 +160,8 @@ class TenantProfile(models.Model):
 
 class Tenancy(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    property_unit_id = models.ForeignKey(PropertyUnit, on_delete=models.CASCADE, related_name="tenancies")
-    tenant_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tenancies")
+    property_unit = models.ForeignKey(PropertyUnit, on_delete=models.CASCADE, related_name="tenancies")
+    tenant = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tenancies")
     tenancy_start_date = models.DateField()
     tenancy_end_date = models.DateField(blank=True, null=True)
     monthly_rent = models.DecimalField(max_digits=12, decimal_places=2)
@@ -191,7 +196,7 @@ class Booking(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     property_unit_id = models.ForeignKey(PropertyUnit, on_delete=models.CASCADE, related_name="bookings")
-    guest_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings")
+    guest = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings")
     check_in = models.DateTimeField()
     check_out = models.DateTimeField()
     total_amount = models.DecimalField(max_digits=12, decimal_places=2)
@@ -206,14 +211,14 @@ class Booking(models.Model):
         return f"Booking by {self.guest.email} for {self.property_unit.unit_number}"
 
 
-class Sale(models.Model):
-    property_unit_id = models.OneToOneField(PropertyUnit, on_delete=models.CASCADE, related_name='sale')
-    buyer_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
-    sold_price = models.DecimalField(max_digits=12, decimal_places=2)
-    sold_at = models.DateTimeField(auto_now_add=True)
+# class Sale(models.Model):
+#     property_unit_id = models.OneToOneField(PropertyUnit, on_delete=models.CASCADE, related_name='sale')
+#     buyer_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+#     sold_price = models.DecimalField(max_digits=12, decimal_places=2)
+#     sold_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        db_table = 'sales'
+#     class Meta:
+#         db_table = 'sales'
 
 
 
