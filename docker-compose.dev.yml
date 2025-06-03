@@ -94,11 +94,12 @@ services:
       - DB_HOST=${DB_HOST}
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
-      - DB_PASS=${DB_PASSWORD}
+      - DB_PASSWORD=${DB_PASSWORD}
       - DEBUG=${DEBUG}
 
     depends_on:
       - properties-db
+    restart: on-failure
 
   properties-db:
     image: postgres:14-alpine
