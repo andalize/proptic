@@ -27,7 +27,7 @@ class PropertyProject(models.Model):
 class Role(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=50, unique=True)
-    description = models.TextField(blank=True, null=True)
+    display_name = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = 'roles'
@@ -78,6 +78,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_support = models.BooleanField(default=False)
 
     objects = UserManager()
 
@@ -166,8 +167,6 @@ class Tenancy(models.Model):
     tenancy_end_date = models.DateField(blank=True, null=True)
     monthly_rent = models.DecimalField(max_digits=12, decimal_places=2)
     deposit_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
-    rent_period_paid = models.PositiveIntegerField(help_text="Number of days covered by the paid rent", default=0)
-    paid_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
     payment_due_date = models.DateField(null=True, blank=True)
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -177,6 +176,26 @@ class Tenancy(models.Model):
 
     def __str__(self):
         return f"Tenancy for {self.tenant.email} in {self.property_unit.unit_name}"
+
+
+class RentTransaction(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    tenancy = models.ForeignKey(Tenancy, on_delete=models.CASCADE, related_name="transactions")
+    transaction_date = models.DateTimeField(auto_now_add=True)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    payment_method = models.CharField(max_length=50)  # e.g. 'cash', 'mobile_money', 'card'
+    payment_status = models.CharField(max_length=20, default='completed')  # or 'pending', 'failed', 'reverse', 'completed'
+    rent_period_start_date = models.DateField()
+    rent_period_end_date = models.DateField()
+    paid_days = models.PositiveIntegerField(help_text="Number of days covered by this payment")
+    description = models.TextField(blank=True)
+    receipt_number = models.CharField(max_length=50, blank=True, null=True)
+
+    class Meta:
+        db_table = 'rent_transactions'
+
+    def __str__(self):
+        return f"Transaction of {self.amount} for tenancy {self.tenancy.id}"
 
 
 class Booking(models.Model):
@@ -211,6 +230,7 @@ class Booking(models.Model):
         return f"Booking by {self.guest.email} for {self.property_unit.unit_number}"
 
 
+
 # class Sale(models.Model):
 #     property_unit_id = models.OneToOneField(PropertyUnit, on_delete=models.CASCADE, related_name='sale')
 #     buyer_id = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
@@ -219,6 +239,5 @@ class Booking(models.Model):
 
 #     class Meta:
 #         db_table = 'sales'
-
 
 

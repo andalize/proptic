@@ -6,7 +6,6 @@ services:
       - "3000:3000"
     volumes:
       - ./client:/app
-      - client_node_modules:/app/node_modules
       - client_next:/app/.next 
 
     env_file:
@@ -122,5 +121,4 @@ volumes:
   # rental-db-data:
   # pos-db-data:
   static-data:
-  client_node_modules:
   client_next:

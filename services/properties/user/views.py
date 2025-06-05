@@ -38,10 +38,26 @@ class UserListAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class LoggedInUserAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        # If using JWT, get the token from the request header
+        token = None
+        auth_header = request.META.get('HTTP_AUTHORIZATION')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+        return Response({
+            'user': serializer.data,
+            'token': token
+        })
+
+
 
 class TenantListAPIView(APIView):
     """Handles GET for listing only tenant users"""
-    permission_classes = [IsAdminUser]
+    # permission_classes = [IsAdminUser]
 
     def get(self, request):
         tenants = User.objects.filter(roles__name='tenant')
