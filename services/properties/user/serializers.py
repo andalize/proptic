@@ -13,17 +13,20 @@ class RoleSerializer(serializers.ModelSerializer):
     """Serializer for Role model."""
     class Meta:
         model = Role
-        fields = ['id', 'name', 'description']
+        fields = ['id', 'name', 'display_name']
 
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object with full CRUD support."""
-    roles = serializers.SlugRelatedField(
-        many=True,
-        slug_field='name',
-        queryset=Role.objects.all(),
-        required=False
-    )
+
+    roles = RoleSerializer(many=True, read_only=True)
+
+    # roles = serializers.SlugRelatedField(
+    #     many=True,
+    #     slug_field='name',
+    #     queryset=Role.objects.all(),
+    #     required=False
+    # )
 
     role_ids = serializers.PrimaryKeyRelatedField(
         many=True,
@@ -272,16 +275,5 @@ class AuthTokenSerializer(TokenObtainPairSerializer):
                 code='authorization'
             )
 
-        # Generate JWT token pair
-        refresh = self.get_token(user)
-
-        # Custom response data
-        data = {
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-            'user_id': user.pk,
-            'email': user.email,
-            'roles': [role.name for role in user.roles.all()],
-        }
-
-        return data
+        attrs['user'] = user
+        return attrs
