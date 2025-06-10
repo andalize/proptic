@@ -39,33 +39,35 @@ class Role(models.Model):
 class UserManager(BaseUserManager):
     """Manager for users."""
 
-    def create_user(self, email, password=None, **extra_fields):
+    def create_user(self, email=None, password=None, **extra_fields):
         """Create, save and return a new user."""
-        if not email:
-            raise ValueError('User must have an email address.')
-        email = self.normalize_email(email)
+        if email:
+            email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
-        user.set_password(password)
+        if password:
+            user.set_password(password)
+        else:
+            user.set_unusable_password()
         user.save(using=self._db)
-
         return user
 
-    def create_superuser(self, email, password):
+    def create_superuser(self, email=None, password=None, **extra_fields):
         """Create and return a new superuser."""
-        user = self.create_user(email, password)
+        user = self.create_user(email, password, **extra_fields)
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
-
         return user
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    
     """Custom user model."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    email = models.EmailField(max_length=255, unique=True)
+    email = models.EmailField(max_length=255, unique=True, null=True, blank=True)
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
+    gender = models.CharField(max_length=255, null=True, blank=True)
     roles = models.ManyToManyField(Role, related_name='users') 
     national_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     passport_number = models.CharField(max_length=255, unique=True, null=True, blank=True)
@@ -83,12 +85,25 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
     class Meta:
         db_table = 'users'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['national_id'],
+                name='unique_national_id',
+                condition=~models.Q(national_id=None)
+            ),
+            models.UniqueConstraint(
+                fields=['passport_number'],
+                name='unique_passport_number',
+                condition=~models.Q(passport_number=None)
+            )
+        ]
 
     def __str__(self):
-        return self.email
+        return self.email if self.email else str(self.id)
 
 
 class PropertyUnit(models.Model):
@@ -165,8 +180,8 @@ class Tenancy(models.Model):
     tenant = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tenancies")
     tenancy_start_date = models.DateField()
     tenancy_end_date = models.DateField(blank=True, null=True)
-    monthly_rent = models.DecimalField(max_digits=12, decimal_places=2)
-    deposit_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    monthly_rent = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    deposit_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, null=True, blank=True)
     payment_due_date = models.DateField(null=True, blank=True)
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

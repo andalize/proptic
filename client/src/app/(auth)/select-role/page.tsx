@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 //   tenant: "/tenant"
 // };
 
-export default function SelectRole() {
+export default function SelectRole(){
   const router = useRouter();
   const { data, isLoading } = useGetProfile();
 

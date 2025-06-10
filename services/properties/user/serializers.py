@@ -21,13 +21,6 @@ class UserSerializer(serializers.ModelSerializer):
 
     roles = RoleSerializer(many=True, read_only=True)
 
-    # roles = serializers.SlugRelatedField(
-    #     many=True,
-    #     slug_field='name',
-    #     queryset=Role.objects.all(),
-    #     required=False
-    # )
-
     role_ids = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=Role.objects.all(),
@@ -46,6 +39,7 @@ class UserSerializer(serializers.ModelSerializer):
             'password', 
             'first_name',
             'last_name',
+            'gender',
             'full_name',
             'role_ids',
             'national_id',
@@ -170,6 +164,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             'email', 
             'password', 
             'first_name',
+            'gender',
             'last_name',
             'national_id',
             'passport_number',
@@ -178,6 +173,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {
                 'write_only': True,
+                'required': False,
                 'min_length': 8,
                 'style': {'input_type': 'password'}
             },

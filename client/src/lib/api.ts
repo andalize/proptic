@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 // Create an axios instance
 export  const api = axios.create({
@@ -34,3 +34,9 @@ api.interceptors.response.use(
   }
 );
 
+
+type ResponseFormat<T = any> = Record<string, any> & {
+  data?: T;
+};
+
+export type IAxiosResponse<InnerData = any> = AxiosResponse<ResponseFormat<InnerData>>;
