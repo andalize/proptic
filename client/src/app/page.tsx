@@ -1,11 +1,6 @@
-import LoginForm from "./(auth)/login/page";
-import SelectRole from "./(auth)/select-role/page";
+// app/page.tsx
+import { redirect } from 'next/navigation';
 
-export default function Home() {
-  return (
-    <>
-      <LoginForm />
-      <SelectRole/>
-    </>
-  );
+export default function RootPage() {
+  redirect('/login');
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import {useState, useEffect} from 'react';
 import Image from "next/image";
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -25,11 +25,11 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-const LoginForm: React.FC = () => {
+export default function Login(){
   const router = useRouter();
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [generalError, setGeneralError] = React.useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [generalError, setGeneralError] = useState<string | null>(null);
 
 
   const { mutate, isPending, data, error } = useCreateMutation({
@@ -54,14 +54,9 @@ const LoginForm: React.FC = () => {
     mutate({
       data: values,
       onSuccess: {
-        callback: ({data}) => {
+        callback: (data) => {
 
           setToken(data?.token);
-
-          // Identify user in PostHog
-          // analytics.identifyUser(data);
-
-          // form.reset();
 
           const roles = data?.roles || [];
 
@@ -159,7 +154,7 @@ const LoginForm: React.FC = () => {
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full cursor-pointer"
                 disabled={isLoading}
               >
                 {isLoading ? 'Signing in...' : 'Sign in'}
@@ -171,5 +166,3 @@ const LoginForm: React.FC = () => {
     </div>
   );
 };
-
-export default LoginForm;

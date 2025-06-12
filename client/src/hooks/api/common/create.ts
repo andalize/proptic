@@ -14,7 +14,7 @@ interface paramsInterface {
 async function createEntity(endpoint: string, data: IUnknown) {
   try {
     const response = await api.post(endpoint, data);
-    return response;
+    return response.data;
   } catch (error) {
     console.error(`API error from ${endpoint}:`, error);
     throw error;

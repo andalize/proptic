@@ -7,13 +7,10 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 const Providers: FC<PropsWithChildren> = ({ children }) => {
   const reactQuery = new QueryClient();
 
-//   const { data: userProfile } = useProfileStore();
     return (
       <QueryClientProvider client={reactQuery}>
         {children}
-        {process.env.NODE_ENV === 'development' && (
-          <ReactQueryDevtools initialIsOpen={false} />
-        )}
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
   );
 };
