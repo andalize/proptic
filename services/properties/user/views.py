@@ -60,7 +60,9 @@ class TenantListAPIView(APIView):
     # permission_classes = [IsAdminUser]
 
     def get(self, request):
-        tenants = User.objects.filter(roles__name='tenant')
+        tenants = User.objects.filter(roles__name='tenant').prefetch_related(
+            'tenancies__property_unit__property_project'
+        )
         serializer = UserSerializer(tenants, many=True)
         return Response(serializer.data)
 

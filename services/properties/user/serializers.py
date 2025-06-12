@@ -5,7 +5,8 @@ from django.contrib.auth import (
 from django.utils.translation import gettext as _
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
-from core.models import Role
+from core.models import Role, Tenancy
+from tenancy.serializers import TenancySerializer
 
 User = get_user_model()
 
@@ -16,10 +17,26 @@ class RoleSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'display_name']
 
 
+class UserTenancySerializer(serializers.ModelSerializer):
+    property_unit_id = serializers.CharField(source='property_unit.id')
+    property_unit_name = serializers.CharField(source='property_unit.unit_name')
+    
+    class Meta:
+        model = Tenancy
+        fields = [
+            'property_unit_id', 
+            'property_unit_name',
+            'tenancy_start_date',
+            'tenancy_end_date'
+        ]
+
+
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object with full CRUD support."""
 
     roles = RoleSerializer(many=True, read_only=True)
+
+    tenancy = serializers.SerializerMethodField()
 
     role_ids = serializers.PrimaryKeyRelatedField(
         many=True,
@@ -45,6 +62,7 @@ class UserSerializer(serializers.ModelSerializer):
             'national_id',
             'passport_number',
             'roles',
+            'tenancy',
             'is_active', 
             'is_staff'
         ]
@@ -152,6 +170,12 @@ class UserSerializer(serializers.ModelSerializer):
         instance.is_active = False
         instance.save()
         return instance
+    
+    def get_tenancy(self, obj):
+        tenancy = Tenancy.objects.filter(tenant=obj, active=True).select_related('property_unit').first()
+        if tenancy:
+            return UserTenancySerializer(tenancy).data
+        return None
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
