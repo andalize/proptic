@@ -1,10 +1,10 @@
-import { baseApiType, createPayloadType } from "@/interface/api";
-import { IUnknown } from "@/interface/Iunknown";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { api } from "@/lib/api";
-import { onError } from "./handlers";
-import { ReactNode } from "react";
+import { baseApiType, createPayloadType } from '@/interface/api';
+import { IUnknown } from '@/interface/unknown';
+import { useMutation } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { api } from '@/lib/api';
+import { onError } from './handlers';
+import { ReactNode } from 'react';
 
 interface paramsInterface {
   data: IUnknown;
@@ -33,25 +33,20 @@ export const useCreateMutation = ({
     mutationFn: ({ data }: paramsInterface) => createEntity(endpoint, data),
     onSuccess: (respData, { onSuccess }: createPayloadType) => {
       if (showToast) {
-        toast(
-          onSuccess?.message
-            ? `${onSuccess?.message} ✅`
-            : `${Entity} created ✅`,
-          {
-            description: "Operation completed successfully.",
-          }
-        );
+        toast(onSuccess?.message ? `${onSuccess?.message} ✅` : `${Entity} created ✅`, {
+          description: 'Operation completed successfully.',
+        });
       }
       if (onSuccess?.callback) {
         try {
           onSuccess.callback(respData);
         } catch (callbackError) {
-          console.error("Error in success callback:", callbackError);
+          console.error('Error in success callback:', callbackError);
         }
       }
     },
     onError: (error) => {
-      console.error("Mutation error:", error);
+      console.error('Mutation error:', error);
       if (showErrorToast) {
         onError(error);
       } else if (onErrorCallback) {

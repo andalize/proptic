@@ -23,7 +23,7 @@ import {
 const items = [
   {
     title: "Dashboard",
-    url: "#",
+    url: "/receptionist",
     icon: LayoutDashboard,
   },
   {
@@ -33,15 +33,11 @@ const items = [
   },
   {
     title: "Rental Units",
-    url: "#",
+    url: "/receptionist/property-units",
     icon: Warehouse,
   },
  
-  // {
-  //   title: "Settings",
-  //   url: "#",
-  //   icon: Settings,
-  // },
+
 ]
 
 export function AppSidebar() {

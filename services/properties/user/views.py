@@ -43,14 +43,18 @@ class LoggedInUserAPIView(APIView):
 
     def get(self, request):
         serializer = UserSerializer(request.user)
-        # If using JWT, get the token from the request header
-        token = None
-        auth_header = request.META.get('HTTP_AUTHORIZATION')
-        if auth_header and auth_header.startswith('Bearer '):
-            token = auth_header.split(' ')[1]
+
+        # Get the property project details
+        property_project = None
+        if request.user.property_project:
+            property_project = {
+                'id': str(request.user.property_project.id),
+                'name': request.user.property_project.name
+            }
+    
         return Response({
             'user': serializer.data,
-            'token': token
+            'property_project': property_project
         })
 
 
@@ -166,6 +170,7 @@ class CreateTokenView(APIView):
             'user_id': user.pk,
             'email': user.email,
             'roles': user_roles
+
         }, status=status.HTTP_200_OK)
 
 class UserRegistrationAPIView(APIView):

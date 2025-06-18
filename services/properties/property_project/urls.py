@@ -3,6 +3,7 @@ from .views import (
     PropertyProjectListAPIView,
     PropertyProjectDetailAPIView,
     PropertyUnitListAPIView,
+    PropertyUnitCreateAPIView,
     PropertyUnitDetailAPIView
 )
 
@@ -13,5 +14,6 @@ urlpatterns = [
     
     # Unit URLs
     path('units/', PropertyUnitListAPIView.as_view(), name='unit-list'),
+    path('units/create', PropertyUnitCreateAPIView.as_view(), name='unit-create'),
     path('units/<uuid:pk>/', PropertyUnitDetailAPIView.as_view(), name='unit-detail'),
 ]

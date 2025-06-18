@@ -14,7 +14,7 @@ class PropertyProject(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
-    address = models.TextField()
+    address = models.TextField()    
     description = models.TextField(blank=True, null=True)
     cover_photo = models.ImageField(upload_to='property_projects/covers/', null=True, blank=True)
 

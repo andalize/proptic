@@ -1,7 +1,7 @@
-import { useCallback } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { IUnknown } from "@/interface/Iunknown";
-import { isEmpty, pick } from "lodash";
+import { useCallback } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { IUnknown } from '@/interface/unknown';
+import { isEmpty, pick } from 'lodash';
 
 export const useQueryString = () => {
   const router = useRouter();
@@ -10,21 +10,21 @@ export const useQueryString = () => {
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
-      const path = pathname + "?";
+      const path = pathname + '?';
       const params = new URLSearchParams(searchParams);
       params.set(name, value);
 
       return path + params.toString();
     },
-    [searchParams]
+    [searchParams],
   );
 
   const removeQuery = useCallback(
     (name: string | string[]) => {
-      const path = pathname + "?";
+      const path = pathname + '?';
       const params = new URLSearchParams(searchParams);
 
-      if (typeof name === "string") {
+      if (typeof name === 'string') {
         params.delete(name);
       } else {
         name.forEach((item) => params.delete(item));
@@ -34,7 +34,7 @@ export const useQueryString = () => {
         scroll: false,
       });
     },
-    [searchParams, router, pathname]
+    [searchParams, router, pathname],
   );
 
   const resetQuery = useCallback(() => {
@@ -47,18 +47,18 @@ export const useQueryString = () => {
 
   const pushQuery = useCallback(
     (name: string, value: string) => {
-      if (value == "") return removeQuery(name);
+      if (value == '') return removeQuery(name);
       const path = createQueryString(name, value);
       router.push(path, {
         scroll: false,
       });
     },
-    [createQueryString, removeQuery, router]
+    [createQueryString, removeQuery, router],
   );
 
   const pushQueryObject = useCallback(
     (queries: IUnknown) => {
-      const path = pathname + "?";
+      const path = pathname + '?';
       const currentParamsObject = Object.fromEntries(searchParams);
 
       const params = new URLSearchParams({
@@ -70,18 +70,16 @@ export const useQueryString = () => {
         scroll: false,
       });
     },
-    [router, pathname, searchParams]
+    [router, pathname, searchParams],
   );
 
   const getQueryObject = useCallback(
     (keys: string[] = []) => {
       const currentParamsObject = Object.fromEntries(searchParams);
 
-      return isEmpty(keys)
-        ? currentParamsObject
-        : pick(currentParamsObject, keys);
+      return isEmpty(keys) ? currentParamsObject : pick(currentParamsObject, keys);
     },
-    [searchParams]
+    [searchParams],
   );
 
   return {

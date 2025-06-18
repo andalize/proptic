@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
-import { IUnknown } from "./Iunknown";
+import { IUnknown } from './unknown';
 
 export interface baseApiType {
   queryKey: string;
@@ -20,7 +20,7 @@ export interface FetchQueryType extends baseApiType {
 }
 export interface updateApiType extends baseApiType {
   skipIdPrefix?: boolean;
-  isPut?: boolean
+  isPut?: boolean;
 }
 
 export interface createPayloadType {
