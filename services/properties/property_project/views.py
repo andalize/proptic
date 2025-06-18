@@ -71,39 +71,27 @@ class PropertyProjectDetailAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# PropertyUnit Views
 class PropertyUnitListAPIView(APIView):
-
     pagination_class = StandardPagination
 
-
-    """Handles GET all and POST for units"""
     def get(self, request):
+        units = PropertyUnit.objects.select_related('property_project').order_by('property_project__name', 'unit_name')
         
-        units = PropertyUnit.objects.select_related('property_project')
-        
-        # Optional: filtering can go here
-
-        units = units.order_by('property_project__name', 'unit_name')
-        
-        # Step 1: Instantiate the paginator
         paginator = self.pagination_class()
-
-        # Step 2: Paginate the queryset
         page = paginator.paginate_queryset(units, request)
-
-        # Step 3: Serialize the page
         serializer = PropertyUnitSerializer(page, many=True)
-
-        # Step 4: Return paginated response from the same paginator instance
+        
         return paginator.get_paginated_response(serializer.data)
 
+
+class PropertyUnitCreateAPIView(APIView):
     def post(self, request):
         serializer = PropertyUnitSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class PropertyUnitDetailAPIView(APIView):

@@ -21,20 +21,7 @@ export const tenantSchema = z.object({
   tenancy_end_date: z.string(),   // ISO date string
 });
   
-// .refine((data) => {
-//     // Conditional validation: require passport if id_type is passport
-//     if (data.id_type === "passport" && !data.passport) {
-//         return false;
-//     }
-//     // Conditional validation: require national_id if id_type is national_id
-//     if (data.id_type === "national_id" && !data.national_id) {
-//         return false;
-//     }
-//     return true;
-// }, {
-//     message: "ID number is required based on selected ID type",
-//     path: ["passport"] // This will show the error on the passport field
-// });
+
 
 export type Tenant = z.infer<typeof tenantSchema>;
 

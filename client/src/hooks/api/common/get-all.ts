@@ -1,22 +1,18 @@
-import { useEffect } from "react";
-import { IUnknown } from "@/interface/Iunknown";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect } from 'react';
+import { IUnknown } from '@/interface/unknown';
+import { useQuery } from '@tanstack/react-query';
+import { IAxiosResponse, api } from '@/lib/api';
+import { useQueryString } from '@/hooks/useQueryString';
+import { fullMetaType, useMetaStore } from '@/hooks/zustand/useMetaStore';
+import { pick } from 'lodash';
+import { onError } from './handlers';
 
-import { IAxiosResponse, api } from "@/lib/api";
-import { useQueryString } from "@/hooks/useQueryString";
-// import { useSearch } from "@/hooks/useSearch";
-import { fullMetaType, useMetaStore } from "@/hooks/zustand/useMetaStore";
-import { pick } from "lodash";
-import { onError } from "./handlers";
-
-const fetchList = async ({
-  queryKey,
-}: IUnknown): Promise<IAxiosResponse["data"]> => {
+const fetchList = async ({ queryKey }: IUnknown): Promise<IAxiosResponse['data']> => {
   const [_key, { filter, search, endpoint, meta }] = queryKey;
 
   const data = (await api.get(endpoint, {
     params: { search, ...filter, ...meta },
-  })) as IAxiosResponse["data"];
+  })) as IAxiosResponse['data'];
   return data;
 };
 
@@ -45,10 +41,10 @@ export const useGetList = ({
   // const { search } = useSearch();
   const defaultMeta: Partial<fullMetaType> = pick(
     {
-      ...getQueryObject(["perPage", "page"]),
+      ...getQueryObject(['perPage', 'page']),
       ...meta,
     },
-    ["page", "perPage"]
+    ['page', 'perPage'],
   );
 
   const query = useQuery({

@@ -1,6 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
-import ReceptionistDashBoard from "./(receptionist)/ReceptionistDashboard";
+import ReceptionistDashBoard from "./(receptionist)/receptionist-dashboard";
 
 export default function Home() {
   const { role } = useParams<{ role: string }>();

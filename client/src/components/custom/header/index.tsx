@@ -6,8 +6,8 @@ import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useProfileStore } from "@/hooks/zustand/users/userProfile";
-import { ProfileDropdown } from "./ProfileDropdown";
-import { RoleDropdown } from "./RoleDropdown";
+import { ProfileDropdown } from "./profile-dropdown";
+import { RoleDropdown } from "./roled-dropdown";
 // import { NotificationBanner } from "./NotificationBanner";
 
 interface HeaderProps {

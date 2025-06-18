@@ -1,7 +1,7 @@
-import { IUnknown } from "@/interface/Iunknown";
-import { UnknownFunction } from "@/interface/unknownFuction";
-import { isEmpty } from "lodash";
-import { create } from "zustand";
+import { IUnknown } from '@/interface/unknown';
+import { UnknownFunction } from '@/interface/unknown-fuction';
+import { isEmpty } from 'lodash';
+import { create } from 'zustand';
 
 interface defaultMeta {
   method: string;

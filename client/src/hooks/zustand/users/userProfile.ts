@@ -1,6 +1,5 @@
-import { create } from "zustand";
-import { IUnknown } from '@/interface/Iunknown';
-
+import { create } from 'zustand';
+import { IUnknown } from '@/interface/unknown';
 
 interface profileStore {
   data: IUnknown;
@@ -11,5 +10,5 @@ export const useProfileStore = create<profileStore>((set) => ({
   data: {},
   setData: (data) => {
     set({ data: data });
-  }
+  },
 }));
