@@ -55,7 +55,7 @@ export default function ReceptionistDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <div className="flex items-center gap-4">
+        {/* <div className="flex items-center gap-4">
           <button className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
             <Download size={16} />
             Download
@@ -64,7 +64,7 @@ export default function ReceptionistDashboard() {
             <Calendar size={16} />
             Pick a date
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Navigation Tabs */}
@@ -84,7 +84,7 @@ export default function ReceptionistDashboard() {
       </div>
 
       {/* Key Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
         {/* New Appointments */}
         <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
           <div className="flex items-center justify-between mb-4">
@@ -100,7 +100,7 @@ export default function ReceptionistDashboard() {
               </svg>
             </button>
           </div>
-          <div className="text-3xl font-bold text-gray-900 mb-2">4,682</div>
+          <div className="text-3xl font-bold text-gray-900 mb-2">500</div>
           <div className="text-sm text-gray-500 mb-3">Since Last week</div>
           <div className="flex items-center justify-between">
             <button className="text-sm text-gray-600 hover:text-gray-800">Details</button>
@@ -112,7 +112,7 @@ export default function ReceptionistDashboard() {
         </div>
 
         {/* Phone Calls */}
-        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+        {/* <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Phone size={16} className="text-gray-600" />
@@ -135,10 +135,10 @@ export default function ReceptionistDashboard() {
               <TrendingDown size={12} />
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Avg Response Time */}
-        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+        {/* <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <Clock size={16} className="text-gray-600" />
@@ -161,7 +161,7 @@ export default function ReceptionistDashboard() {
               <TrendingUp size={12} />
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Total Revenue */}
         <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
@@ -191,7 +191,7 @@ export default function ReceptionistDashboard() {
         {/* Activity Chart */}
         <div className="lg:col-span-2 bg-white rounded-lg p-6 shadow-sm border border-gray-200">
           <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Call Activity - Monthly</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Tenancy - Monthly</h3>
             <p className="text-sm text-gray-600">Showing total calls for the last 6 months</p>
           </div>
           <div className="h-80">
@@ -205,13 +205,13 @@ export default function ReceptionistDashboard() {
                   tick={{ fontSize: 12, fill: '#6b7280' }}
                 />
                 <YAxis hide />
-                <Area 
+                {/* <Area 
                   type="monotone" 
                   dataKey="calls" 
                   stackId="1"
                   stroke="#fca5a5" 
                   fill="rgba(252, 165, 165, 0.3)"
-                />
+                /> */}
                 <Area 
                   type="monotone" 
                   dataKey="appointments" 
@@ -228,100 +228,19 @@ export default function ReceptionistDashboard() {
         <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
           <div className="mb-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-2">Appointments</h3>
-            <div className="text-2xl font-bold text-green-600 mb-1">+2350</div>
-            <div className="text-sm text-green-600">+180.1% from last month</div>
+            <div className="text-2xl font-bold text-green-600 mb-1">+100</div>
+            <div className="text-sm text-green-600">+10% from last month</div>
           </div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={subscriptionData}>
+                <BarChart data={subscriptionData}>
                 <Bar 
                   dataKey="value" 
-                  fill="#ef4444"
+                  fill="#3b82f6"
                   radius={[2, 2, 0, 0]}
                 />
-              </BarChart>
+                </BarChart>
             </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Visitors Table */}
-        <div className="lg:col-span-2 bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-900">Recent Visitors</h3>
-            <p className="text-sm text-gray-600">Manage your visitor logs.</p>
-          </div>
-          <div className="mb-4">
-            <input 
-              type="text" 
-              placeholder="Filter emails..." 
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between py-3 border-b border-gray-100">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Users size={16} className="text-blue-600" />
-                </div>
-                <div>
-                  <div className="font-medium text-gray-900">John Smith</div>
-                  <div className="text-sm text-gray-500">john@example.com</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Checked In</span>
-                <button className="text-gray-400 hover:text-gray-600">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                    <path d="M8 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM1.5 8a6.5 6.5 0 1 1 13 0 6.5 6.5 0 0 1-13 0Z" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Team Members */}
-        <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Team Members</h3>
-            <p className="text-sm text-gray-600">Invite your team members to collaborate.</p>
-          </div>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-medium">
-                  DK
-                </div>
-                <div>
-                  <div className="font-medium text-gray-900">Dale Komen</div>
-                  <div className="text-sm text-gray-500">dale@example.com</div>
-                </div>
-              </div>
-              <select className="text-sm border border-gray-300 rounded px-2 py-1">
-                <option>Member</option>
-                <option>Admin</option>
-                <option>Owner</option>
-              </select>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-medium">
-                  SM
-                </div>
-                <div>
-                  <div className="font-medium text-gray-900">Sarah Miller</div>
-                  <div className="text-sm text-gray-500">sarah@example.com</div>
-                </div>
-              </div>
-              <select className="text-sm border border-gray-300 rounded px-2 py-1">
-                <option>Admin</option>
-                <option>Member</option>
-                <option>Owner</option>
-              </select>
-            </div>
           </div>
         </div>
       </div>
