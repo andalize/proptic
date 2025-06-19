@@ -1,10 +1,7 @@
 import {
-  Calendar,
   LayoutDashboard,
   Users as Tenants,
   Warehouse,
-  Search,
-  Settings
 } from "lucide-react"
 
 import {
@@ -44,11 +41,16 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-         <h2>La Casa</h2>
+        <a
+          href="/receptionist"
+          className="block px-3 py-2 rounded-md hover:bg-muted transition-colors font-semibold text-sm"
+        >
+          La Casa
+        </a>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>General  </SidebarGroupLabel>
+          <SidebarGroupLabel>General</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
@@ -66,5 +68,5 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }

@@ -202,7 +202,7 @@ export const PropertyUnitTable: React.FC<
 
         <div className="mt-4">
           <Label htmlFor="price" className="mb-2">
-            Price (RWF)
+            Price (USD)
           </Label>
           <Input
             type="number"

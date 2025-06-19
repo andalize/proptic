@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useGetProfile } from "@/hooks/api/users/profile";
 import { getToken, removeToken, setToken } from "@/lib/token";
 import { useQueryString } from "@/hooks/useQueryString";
+import { ProfileDropdown } from "@/components/custom/header/profile-dropdown";
 // import { useNetworkStatus } from "@/hooks/useNetworkStatus";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -39,13 +40,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </div>
       <div className="flex-1 min-h-screen bg-[#F1F2F4]">
         <div className="print:hidden mb-14 lg:mb-11">
-            <Header isOnline={false}>
-              <SidebarTrigger/>
-            </Header>
+          <Header
+            isOnline={false}
+            left={<SidebarTrigger />}
+            right={<ProfileDropdown />}
+          />
         </div>
-        <main className="">
-          {children}
-        </main>
+        <main className="">{children}</main>
       </div>
     </SidebarProvider>
   );
