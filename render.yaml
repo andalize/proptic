@@ -1,0 +1,38 @@
+services:
+  - name: proptic-api
+    type: web
+    runtime: docker
+    plan: free
+    dockerfilePath: ./services/properties/Dockerfile
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: DJANGO_SETTINGS_MODULE
+        value: "properties.settings"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: proptic-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: "rwanda-app-api.onrender.com,localhost,127.0.0.1"
+
+  - name: proptic-client
+    type: web
+    runtime: docker
+    plan: free
+    dockerfilePath: ./client/Dockerfile
+    envVars:
+      - key: NEXT_PUBLIC_API_BASE_URL
+        value: "https://proptic-api.onrender.com"
+      - key: NODE_ENV
+        value: "production"
+
+databases:
+  - name: proptic-db
+    databaseName: proptic_demo_db
+    user: proptic_db_admin
+    plan: free

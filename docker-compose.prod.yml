@@ -6,109 +6,119 @@
 #       - "3000:3000"
 #     volumes:
 #       - ./client:/app
-#       - client_node_modules:/app/node_modules
-#     environment:
-#       - NODE_ENV=development
-#     depends_on:
-#       - api-gateway
+#       - client_next:/app/.next 
 
-#   api-gateway:
-#     build:
-#       context: ./api-gateway
-#     ports:
-#       - "8000:8000"
-#     depends_on:
-#       - hotel-api
-#       - rental-api
-#       - apartments-api
-
-#   hotel-api:
-#     build:
-#       context: ./services/hotel
-#     ports:
-#       - "9001:9000"
-#     volumes:
-#       - ./services/hotel:/server
-#       - static-data:/vol/web
-#     command: >
-#       sh -c "python manage.py wait_for_db &&
-#              python manage.py migrate &&
-#              python manage.py runserver 0.0.0.0:9000"
 #     env_file:
-#       - ./services/hotel/.env
-#     depends_on:
-#       - hotel-db
+#       - ./client/.env
+#     # depends_on:
+#     #   - api-gateway
 
-#   hotel-db:
-#     image: postgres:13-alpine
-#     volumes:
-#       - hotel-db-data:/var/lib/postgresql/data
-#     ports:
-#       - '5436:5432'
-#     env_file:
-#       - ./services/hotel/.env
+#   # api-gateway:
+#   #   build:
+#   #     context: ./api-gateway
+#   #   ports:
+#   #     - "8000:8000"
+#   #   depends_on:
+#   #     - hotel-api
+#   #     - rental-api
+#   #     - properties-api
 
-#   rental-api:
-#     build:
-#       context: ./services/rental
-#     ports:
-#       - "9002:9000"
-#     volumes:
-#       - ./services/rental:/server
-#       - static-data:/vol/web
-#     command: >
-#       sh -c "python manage.py wait_for_db &&
-#              python manage.py migrate &&
-#              python manage.py runserver 0.0.0.0:9000"
-#     env_file:
-#       - ./services/rental/.env
-#     depends_on:
-#       - rental-db
+#   # hotel-api:
+#   #   build:
+#   #     context: ./services/hotel
+#   #   ports:
+#   #     - "9001:9000"
+#   #   volumes:
+#   #     - ./services/hotel:/server
+#   #     - static-data:/vol/web
+#   #   command: >
+#   #     sh -c "python manage.py wait_for_db &&
+#   #            python manage.py migrate &&
+#   #            python manage.py runserver 0.0.0.0:9000"
+#   #   env_file:
+#   #     - ./services/hotel/.env
+#   #   depends_on:
+#   #     - hotel-db
 
-#   rental-db:
-#     image: postgres:13-alpine
-#     volumes:
-#       - rental-db-data:/var/lib/postgresql/data
-#     ports:
-#       - '5437:5432'
-#     env_file:
-#       - ./services/rental/.env
+#   # hotel-db:
+#   #   image: postgres:13-alpine
+#   #   volumes:
+#   #     - hotel-db-data:/var/lib/postgresql/data
+#   #   ports:
+#   #     - '5436:5432'
+#   #   env_file:
+#   #     - ./services/hotel/.env
+
+#   # rental-api:
+#   #   build:
+#   #     context: ./services/rental
+#   #   ports:
+#   #     - "9002:9000"
+#   #   volumes:
+#   #     - ./services/rental:/server
+#   #     - static-data:/vol/web
+#   #   command: >
+#   #     sh -c "python manage.py wait_for_db &&
+#   #            python manage.py migrate &&
+#   #            python manage.py runserver 0.0.0.0:9000"
+#   #   env_file:
+#   #     - ./services/rental/.env
+#   #   depends_on:
+#   #     - rental-db
+
+#   # rental-db:
+#   #   image: postgres:13-alpine
+#   #   volumes:
+#   #     - rental-db-data:/var/lib/postgresql/data
+#   #   ports:
+#   #     - '5437:5432'
+#   #   env_file:
+#   #     - ./services/rental/.env
   
-#   apartments-api:
+#   properties-api:
 #     build:
 #       context: ./services
-#       dockerfile: apartments/Dockerfile
+#       dockerfile: properties/Dockerfile
 
 #     ports:
 #       - "9003:9000"
 #     volumes:
-#       - ./services/apartments:/services
+#       - ./services/properties:/services
 #       - static-data:/vol/web
 #       - ./services/shared_scripts:/services/shared_scripts
 
-#     command: >
-#       sh -c "python  /services/shared_scripts/wait_for_db.py &&
-#              python manage.py migrate &&
-#              python manage.py runserver 0.0.0.0:9000"
 #     env_file:
-#       - ./services/apartments/.env
-#     depends_on:
-#       - apartments-db
+#       - ./.env 
+#     environment:
+#       - DB_HOST=${DB_HOST}
+#       - DB_NAME=${DB_NAME}
+#       - DB_USER=${DB_USER}
+#       - DB_PASSWORD=${DB_PASSWORD}
+#       - DEBUG=${DEBUG}
 
-#   apartments-db:
-#     image: postgres:13-alpine
+#     depends_on:
+#       - properties-db
+#     restart: on-failure
+
+#   properties-db:
+#     image: postgres:14-alpine
 #     volumes:
-#       - apartments-db-data:/var/lib/postgresql/data
+#       - properties-db-data:/var/lib/postgresql/data
 #     ports:
 #       - '5438:5432'
+
 #     env_file:
-#       - ./services/apartments/.env
+#       - ./.env 
+#     environment:
+#       - POSTGRES_DB=${POSTGRES_DB}
+#       - POSTGRES_USER=${POSTGRES_USER}
+#       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 
 
 # volumes:
-#   hotel-db-data:
-#   apartments-db-data:
-#   rental-db-data:
-#   pos-db-data:
+#   # hotel-db-data:
+#   properties-db-data:
+#   # rental-db-data:
+#   # pos-db-data:
 #   static-data:
-#   client_node_modules:
+#   client_next:
