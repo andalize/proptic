@@ -18,7 +18,7 @@ services:
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: "rwanda-app-api.onrender.com,localhost,127.0.0.1"
+        value: "propptic-api.onrender.com,localhost,127.0.0.1"
 
   - name: proptic-client
     type: web
