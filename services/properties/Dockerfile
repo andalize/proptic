@@ -13,8 +13,9 @@ COPY services/properties/requirements.txt /services/
 RUN pip install --upgrade pip --root-user-action=ignore && \
     pip install -r requirements.txt --root-user-action=ignore
 
-COPY . /services/
-
+COPY services/properties /services/
+COPY services/shared_scripts /services/shared_scripts/
+    
 # Collect static files
 RUN python services/properties/manage.py collectstatic --no-input
 
@@ -26,4 +27,5 @@ USER appuser
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD ["gunicorn", "--bind", "0.0.0.0:9000", "properties.wsgi:application"]
+
+CMD ["gunicorn", "--bind", "0.0.0.0:9000", "properties.wsgi:application", "--chdir", "/services"]
