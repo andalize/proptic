@@ -19,6 +19,7 @@ COPY . /services/
 RUN python ./properties/manage.py collectstatic --no-input
 
 COPY ./properties/docker/entrypoint.sh /entrypoint.sh
+
 RUN chmod +x /entrypoint.sh
 
 USER appuser
