@@ -16,7 +16,7 @@ RUN pip install --upgrade pip --root-user-action=ignore && \
 COPY . /services/
 
 # Collect static files
-RUN python ./properties/manage.py collectstatic --no-input
+RUN python services/properties/manage.py collectstatic --no-input
 
 COPY services/properties/docker/entrypoint.sh /entrypoint.sh
 
