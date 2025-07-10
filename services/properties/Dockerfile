@@ -9,17 +9,21 @@ RUN apk add --no-cache gcc musl-dev postgresql-dev build-base linux-headers
 
 RUN adduser -D appuser
 
-COPY services/properties/requirements.txt /services/
+COPY services /services/
+
+
+# COPY services/properties/requirements.txt /services/
+
 RUN pip install --upgrade pip --root-user-action=ignore && \
     pip install -r requirements.txt --root-user-action=ignore
 
-COPY services/properties /services/
-COPY services/shared_scripts /services/shared_scripts/
+# COPY services/properties /services/
+# COPY services/shared_scripts /services/shared_scripts/
     
 # Collect static files
-RUN python /services/manage.py collectstatic --no-input
+RUN python manage.py collectstatic --no-input
 
-COPY services/properties/docker/entrypoint.sh /entrypoint.sh
+# COPY services/properties/docker/entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh
 
