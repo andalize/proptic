@@ -4,8 +4,7 @@ services:
     runtime: docker
     plan: free
     dockerfilePath: ./services/properties/Dockerfile
-    buildContext: ./services/properties
-
+    
     envVars:
       - key: PORT
         value: 10000
@@ -27,7 +26,6 @@ services:
     runtime: docker
     plan: free
     dockerfilePath: ./client/Dockerfile
-    buildContext: ./client
 
     envVars:
       - key: NEXT_PUBLIC_API_BASE_URL
