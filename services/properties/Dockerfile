@@ -17,7 +17,7 @@ COPY services/properties /services/
 COPY services/shared_scripts /services/shared_scripts/
     
 # Collect static files
-RUN python properties/manage.py collectstatic --no-input
+RUN python /services/manage.py collectstatic --no-input
 
 COPY services/properties/docker/entrypoint.sh /entrypoint.sh
 
