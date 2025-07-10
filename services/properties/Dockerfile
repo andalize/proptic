@@ -11,8 +11,7 @@ RUN adduser -D appuser
 
 COPY services /services/
 
-
-# COPY services/properties/requirements.txt /services/
+COPY services/properties/requirements.txt /services/
 
 RUN pip install --upgrade pip --root-user-action=ignore && \
     pip install -r requirements.txt --root-user-action=ignore
