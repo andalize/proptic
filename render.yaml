@@ -3,8 +3,8 @@ services:
     type: web
     runtime: docker
     plan: free
-    dockerfilePath: ./services/properties/Dockerfile
     buildContext: ./services
+    dockerfilePath: ./services/properties/Dockerfile  # Add full path
 
     
     envVars:
@@ -27,6 +27,7 @@ services:
     type: web
     runtime: docker
     plan: free
+    buildContext: ./client
     dockerfilePath: ./client/Dockerfile
 
     envVars:
