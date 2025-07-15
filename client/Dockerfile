@@ -11,13 +11,13 @@ RUN chown node:node /app
 USER node
 
 # Copy package.json and package-lock.json first
-COPY --chown=node:node client/package*.json ./
+COPY --chown=node:node package*.json ./
 
 # Install dependencies (as node user)
 RUN npm install --legacy-peer-deps
 
 # Copy the rest of the application (excluding node_modules via .dockerignore)
-COPY --chown=node:node client/. .
+COPY --chown=node:node . .
 
 # Create necessary directories with proper permissions
 RUN mkdir -p /app/.next /app/.next/types /app/.next/cache

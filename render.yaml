@@ -4,6 +4,8 @@ services:
     runtime: docker
     plan: free
     dockerfilePath: ./services/properties/Dockerfile
+    buildContext: ./services
+
     
     envVars:
       - key: PORT

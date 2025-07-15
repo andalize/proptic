@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from 'axios';
 export  const api = axios.create({
   baseURL: 'http://localhost:9003/api/v1',  // your Django backend API root
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json', 
   },
 });
 
