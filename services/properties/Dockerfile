@@ -9,26 +9,22 @@ RUN apk add --no-cache gcc musl-dev postgresql-dev build-base linux-headers
 
 RUN adduser -D appuser
 
-COPY services /services/
+# Copy services directory into /services (preserving folder structure)
+COPY services/ /services/
 
-COPY services/properties/requirements.txt /services/
-
+# Install dependencies
 RUN pip install --upgrade pip --root-user-action=ignore && \
-    pip install -r requirements.txt --root-user-action=ignore
+    pip install -r /services/requirements.txt --root-user-action=ignore
 
-# COPY services/properties /services/
-# COPY services/shared_scripts /services/shared_scripts/
-    
-# Collect static files
-RUN python manage.py collectstatic --no-input
+# Collect static files (now using /services/properties/manage.py)
+RUN python /services/properties/manage.py collectstatic --no-input
 
-# COPY services/properties/docker/entrypoint.sh /entrypoint.sh
-
+# Copy entrypoint script
+COPY services/properties/docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 USER appuser
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-
-CMD ["gunicorn", "--bind", "0.0.0.0:9000", "properties.wsgi:application", "--chdir", "/services"]
+CMD ["gunicorn", "--bind", "0.0.0.0:9000", "properties.wsgi:application", "--chdir", "/services/properties"]
