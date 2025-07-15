@@ -14,24 +14,35 @@ RUN apk add --no-cache gcc musl-dev postgresql-dev build-base linux-headers
 # Create a non-root user for better security
 RUN adduser -D appuser
 
-# Copy everything from build context (./services) to container /services
-COPY . /services/
+# Copy requirements first for better Docker layer caching
+COPY properties/requirements.txt ./
 
 # Install Python dependencies
 RUN pip install --upgrade pip --root-user-action=ignore && \
     pip install -r requirements.txt --root-user-action=ignore
 
-# Collect static files (manage.py is at /services/manage.py now)
-RUN python manage.py collectstatic --no-input
+# Copy the rest of the application
+COPY . /services/
+
+# Create necessary directories and set permissions
+RUN mkdir -p /vol/web/static /vol/web/media && \
+    chown -R appuser:appuser /vol/web && \
+    chown -R appuser:appuser /services
+
+# Collect static files (manage.py should be at /services/properties/manage.py)
+RUN python properties/manage.py collectstatic --no-input
 
 # Make the entrypoint script executable
-RUN chmod +x /entrypoint.sh
+RUN chmod +x /services/entrypoint.sh
 
 # Switch to the app user
 USER appuser
 
+# Expose port (for documentation, Render will map this)
+EXPOSE 9000
+
 # Entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/services/entrypoint.sh"]
 
 # Run Gunicorn server on container port 9000, binding to 0.0.0.0
-CMD ["gunicorn", "--bind", "0.0.0.0:9000", "properties.wsgi:application", "--chdir", "/services"]
+CMD ["gunicorn", "--bind", "0.0.0.0:9000", "properties.wsgi:application", "--chdir", "/services/properties"]
