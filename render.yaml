@@ -21,7 +21,7 @@ services:
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: "propptic-api.onrender.com,localhost,127.0.0.1"
+        value: "proptic-api.onrender.com,localhost,127.0.0.1"
 
   - name: proptic-client
     type: web
@@ -33,8 +33,12 @@ services:
     envVars:
       - key: NEXT_PUBLIC_API_BASE_URL
         value: "https://proptic-api.onrender.com"
+        
       - key: NODE_ENV
         value: "production"
+
+      - key: PORT
+        value: 3000
 
 databases:
   - name: proptic-db

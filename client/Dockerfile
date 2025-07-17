@@ -22,5 +22,9 @@ COPY --chown=node:node . .
 # Create necessary directories with proper permissions
 RUN mkdir -p /app/.next /app/.next/types /app/.next/cache
 
+
+EXPOSE 3000
+
+
 # Start the application
 CMD ["npm", "run", "dev"]
