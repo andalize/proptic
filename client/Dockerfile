@@ -28,8 +28,8 @@ RUN mkdir -p .next/cache
 
 EXPOSE 3000
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Start the application
 CMD ["npm", "start"]
