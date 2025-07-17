@@ -12,7 +12,7 @@ RUN adduser --system --uid 1001 nextjs
 COPY --chown=nextjs:nodejs package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production --legacy-peer-deps && npm cache clean --force
+RUN npm install --legacy-peer-deps && npm cache clean --force
 
 # Copy the rest of the application
 COPY --chown=nextjs:nodejs . .
@@ -28,8 +28,8 @@ RUN mkdir -p .next/cache
 
 EXPOSE 3000
 
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
 
 # Start the application
 CMD ["npm", "start"]
