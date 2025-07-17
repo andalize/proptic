@@ -29,6 +29,8 @@ services:
     plan: free
     buildContext: ./client
     dockerfilePath: ./client/Dockerfile
+    buildCommand: pnpm install; pnpm build
+    startCommand: pnpm start
 
     envVars:
       - key: NEXT_PUBLIC_API_BASE_URL
