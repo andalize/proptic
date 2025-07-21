@@ -1,0 +1,31 @@
+# fly.toml app configuration file
+app = "your-app-name"
+primary_region = "lhr"
+
+[build]
+  dockerfile = "services/properties/Dockerfile"
+  
+[env]
+  PORT = "9000"
+  DJANGO_SETTINGS_MODULE = "properties.settings"
+  DEBUG = "False"
+
+[[services]]
+  internal_port = 9000
+  protocol = "tcp"
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ["http", "tls"]
+
+[http_service]
+  internal_port = 9000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
