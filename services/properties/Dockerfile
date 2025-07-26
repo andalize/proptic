@@ -15,7 +15,7 @@ RUN apk add --no-cache gcc musl-dev postgresql-dev build-base linux-headers
 RUN adduser -D appuser
 
 # Copy requirements first for better Docker layer caching
-COPY properties/requirements.txt ./
+COPY /services/properties/requirements.txt ./
 
 # Install Python dependencies
 RUN pip install --upgrade pip --root-user-action=ignore && \
@@ -33,16 +33,16 @@ RUN mkdir -p /vol/web/static /vol/web/media && \
 RUN python properties/manage.py collectstatic --no-input
 
 # Make the entrypoint script executable
-RUN chmod +x /services/properties/docker/entrypoint.sh
+RUN chmod +x /services/entrypoint.sh
 
 # Switch to the app user
 USER appuser
 
-# Expose port (for documentation, Render will map this)
+# Expose port (for documentation, Railway will map this)
 EXPOSE 9000
 
 # Entrypoint
-ENTRYPOINT ["/services/properties/docker/entrypoint.sh"]
+ENTRYPOINT ["/services/entrypoint.sh"]
 
 # Run Gunicorn server on container port 9000, binding to 0.0.0.0
 CMD ["gunicorn", "--bind", "0.0.0.0:9000", "properties.wsgi:application", "--chdir", "/services/properties"]
