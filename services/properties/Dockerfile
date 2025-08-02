@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Set working directory
-WORKDIR /services
+WORKDIR /app
 
 # Install dependencies needed for psycopg2 and Django build steps
 RUN apk add --no-cache gcc musl-dev postgresql-dev build-base linux-headers
@@ -15,34 +15,34 @@ RUN apk add --no-cache gcc musl-dev postgresql-dev build-base linux-headers
 RUN adduser -D appuser
 
 # Copy requirements first for better Docker layer caching
-COPY /services/properties/requirements.txt ./
+COPY services/properties/requirements.txt ./
 
 # Install Python dependencies
 RUN pip install --upgrade pip --root-user-action=ignore && \
     pip install -r requirements.txt --root-user-action=ignore
 
-# Copy the rest of the application
-COPY . /services/
+# Copy the entire project
+COPY . /app/
 
 # Create necessary directories and set permissions
 RUN mkdir -p /vol/web/static /vol/web/media && \
     chown -R appuser:appuser /vol/web && \
-    chown -R appuser:appuser /services
+    chown -R appuser:appuser /app
 
-# Collect static files (manage.py should be at /services/properties/manage.py)
-RUN python properties/manage.py collectstatic --no-input
+# Collect static files (manage.py should be at /app/services/properties/manage.py)
+RUN python services/properties/manage.py collectstatic --no-input
 
 # Make the entrypoint script executable
-RUN chmod +x /services/entrypoint.sh
+# RUN chmod +x /app/entrypoint.sh
 
 # Switch to the app user
 USER appuser
 
-# Expose port (for documentation, Railway will map this)
+# Expose port
 EXPOSE 9000
 
 # Entrypoint
-ENTRYPOINT ["/services/entrypoint.sh"]
+# ENTRYPOINT ["/app/entrypoint.sh"]
 
-# Run Gunicorn server on container port 9000, binding to 0.0.0.0
-CMD ["gunicorn", "--bind", "0.0.0.0:9000", "properties.wsgi:application", "--chdir", "/services/properties"]
+# Run Gunicorn server
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-9000} properties.wsgi:application --chdir /app/services/properties"]
