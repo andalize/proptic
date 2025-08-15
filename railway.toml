@@ -1,12 +1,15 @@
+# Root config (optional)
 [build]
-builder = "dockerfile" 
+builder = "dockerfile"
 
 # Frontend service
 [services.frontend]
 builder = "dockerfile"
+dockerfilePath = "Dockerfile"
 rootDirectory = "client"
 
 # Backend service
 [services.backend]
 builder = "dockerfile"
-rootDirectory = "services/properties" 
+dockerfilePath = "Dockerfile"
+rootDirectory = "services/properties"
