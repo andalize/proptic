@@ -1,35 +1,33 @@
-# Use official Node.js image with smaller footprint
-FROM node:22-alpine
+# Stage 1: Build
+FROM node:22-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
-
-# Copy package files first for better caching
-COPY --chown=nextjs:nodejs package*.json ./
-
-# Install dependencies
+# Copy package files and install deps
+COPY package*.json ./
 RUN npm install --legacy-peer-deps && npm cache clean --force
 
-# Copy the rest of the application
-COPY --chown=nextjs:nodejs . .
+# Copy the rest of the app
+COPY . .
 
-# Build the application
+# Build Next.js
 RUN npm run build
 
-# Switch to non-root user
-USER nextjs
+# Stage 2: Production runner
+FROM node:22-alpine AS runner
 
-# Create necessary directories
-RUN mkdir -p .next/cache
-
-EXPOSE 3000
-
+WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Start the application
+# Copy only what's needed for runtime
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+
+# Expose port
+EXPOSE 3000
+
+# Start app
 CMD ["npm", "start"]
