@@ -1,3 +1,18 @@
+# Root default (optional if not used)
 [build]
 builder = "dockerfile"
+
+
+
+# Frontend service
+[services.frontend]
+builder = "dockerfile"
+dockerfilePath = "client/Dockerfile"
+rootDirectory = "client"
+
+
+# Backend service
+[services.backend]
+builder = "dockerfile"
 dockerfilePath = "services/properties/Dockerfile"
+rootDirectory = "services/properties"
