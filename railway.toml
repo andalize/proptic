@@ -1,12 +1,7 @@
 [build]
-builder = "dockerfile" 
-
-# Frontend service
-[services.frontend]
 builder = "dockerfile"
-rootDirectory = "client"
+dockerfilePath = "services/properties/Dockerfile"
 
-# Backend service
-[services.backend]
-builder = "dockerfile"
-rootDirectory = "services/properties" 
+[deploy]
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
